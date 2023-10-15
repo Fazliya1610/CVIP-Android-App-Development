@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <style>
+        html, body {
+            font-family: Arial, sans-serif;
+            background-color: antiquewhite;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            background-color: blanchedalmond;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            margin: 0 auto;
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .completed {
+            background-color: #8bc34a;
+            color: #fff;
+        }
+
+        .overdue {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        .due-date, .time {
+            white-space: nowrap;
+        }
+
+        .action-buttons button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>To-Do List</h1>
+    <div class="input-container">
+        <input type="text" id="taskInput" placeholder="Task">
+        <input type="date" id="dueDateInput">
+        <input type="time" id="dueTimeInput">
+        <select id="ampmInput">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select>
+        <button id="addTaskBtn">Add</button>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Task</th>
+            <th>Due Date</th>
+            <th>Time</th>
+            <th>Complete</th>
+            <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody id="taskList"></tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const taskInput = document.getElementById("taskInput");
+        const dueDateInput = document.getElementById("dueDateInput");
+        const dueTimeInput = document.getElementById("dueTimeInput");
+        const ampmInput = document.getElementById("ampmInput");
+        const addTaskBtn = document.getElementById("addTaskBtn");
+        const taskList = document.getElementById("taskList");
+
+        // Function to format the date and time
+        function formatDateTime(date, time, ampm) {
+            const options = {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+            };
+            const formattedDate = new Date(date + "T" + time + " " + ampm).toLocaleString(undefined, options);
+            return formattedDate;
+        }
+
+        // Function to add a new task to the table
+        function addTaskToTable(taskText, dueDateText, dueTimeText, ampmText) {
+            const row = taskList.insertRow();
+            const taskCell = row.insertCell(0);
+            const dueDateCell = row.insertCell(1);
+            const timeCell = row.insertCell(2);
+            const completeCell = row.insertCell(3);
+            const deleteCell = row.insertCell(4);
+
+            taskCell.textContent = taskText;
+            dueDateCell.textContent = dueDateText;
+            timeCell.textContent = dueTimeText + " " + ampmText;
+
+            const completeBtn = document.createElement("button");
+            completeBtn.textContent = "Complete";
+            completeBtn.classList.add("completeBtn");
+            completeCell.appendChild(completeBtn);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.classList.add("deleteBtn");
+            deleteCell.appendChild(deleteBtn);
+
+            completeBtn.addEventListener("click", function () {
+                row.classList.toggle("completed");
+            });
+
+            deleteBtn.addEventListener("click", function () {
+                taskList.removeChild(row);
+            });
+        }
+
+        addTaskBtn.addEventListener("click", function () {
+            const taskText = taskInput.value.trim();
+            const dueDateText = dueDateInput.value;
+            const dueTimeText = dueTimeInput.value;
+            const ampmText = ampmInput.value;
+
+            if (taskText !== "") {
+                addTaskToTable(taskText, dueDateText, dueTimeText, ampmText);
+
+                taskInput.value = "";
+                dueDateInput.value = "";
+                dueTimeInput.value = "";
+                ampmInput.value = "";
+            }
+        });
+
+        taskInput.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                addTaskBtn.click();
+            }
+        });
+    });
+</script>
+</body>
+</html>
